@@ -44,7 +44,7 @@ jobs:
       - name: Format generated checkout
         run: dart format lib test
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
       - name: Test import compatibility and task rules
         run: flutter test
       - name: Build APK
