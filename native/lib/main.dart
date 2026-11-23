@@ -782,11 +782,11 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _import() async {
-    final result = await FilePicker.instance.pickFiles(
+    final picked = await FilePicker.pickFile(
       type: FileType.custom,
       allowedExtensions: ['json'],
     );
-    final path = result?.files.single.path;
+    final path = picked?.path;
     if (path == null || !mounted) return;
     try {
       final source = await File(path).readAsString();
