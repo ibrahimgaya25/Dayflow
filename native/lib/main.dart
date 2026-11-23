@@ -773,7 +773,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _export() async {
     final file = await StorageService().createExport(widget.store.data);
-    await Share.shareXFiles([XFile(file.path, mimeType: 'application/json')], text: 'DayFlow backup');
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(file.path, mimeType: 'application/json')],
+        text: 'DayFlow backup',
+      ),
+    );
   }
 
   Future<void> _import() async {
