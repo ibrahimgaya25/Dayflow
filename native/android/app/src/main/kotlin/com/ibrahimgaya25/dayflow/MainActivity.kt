@@ -1,22 +1,28 @@
 package com.ibrahimgaya25.dayflow
 
-import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Activity
+import android.content.Intent
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    companion object {
+        private const val PICK_JSON_REQUEST = 9042
+    }
+
     private var pendingPickerResult: MethodChannel.Result? = null
 
-    private val jsonPicker = registerForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri ->
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != PICK_JSON_REQUEST) return
         val result = pendingPickerResult
         pendingPickerResult = null
-        if (result == null) return@registerForActivityResult
-        if (uri == null) {
+        if (result == null) return
+        val uri = data?.data
+        if (resultCode != Activity.RESULT_OK || uri == null) {
             result.success(null)
-            return@registerForActivityResult
+            return
         }
         try {
             val text = contentResolver.openInputStream(uri)
@@ -43,7 +49,12 @@ class MainActivity : FlutterActivity() {
                 return@setMethodCallHandler
             }
             pendingPickerResult = result
-            jsonPicker.launch(arrayOf("application/json", "text/plain"))
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/json"
+                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/json", "text/plain"))
+            }
+            startActivityForResult(intent, PICK_JSON_REQUEST)
         }
     }
 }
