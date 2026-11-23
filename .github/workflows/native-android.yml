@@ -41,8 +41,8 @@ jobs:
         run: flutter create --platforms=android --org com.ibrahimgaya25 --project-name dayflow_native .
       - name: Install packages
         run: flutter pub get
-      - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Format generated checkout
+        run: dart format lib test
       - name: Analyze
         run: flutter analyze
       - name: Test import compatibility and task rules

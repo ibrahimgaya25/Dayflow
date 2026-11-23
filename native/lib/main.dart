@@ -702,15 +702,41 @@ class InsightsPage extends StatelessWidget {
             padding: const EdgeInsets.all(18),
             child: SizedBox(
               height: 150,
-              child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: List.generate(7, (index) {
-                final date = dateOnly(now).subtract(Duration(days: 6 - index));
-                final count = store.data.tasks.where((task) => task.done && task.completedAt?.startsWith(ymd(date)) == true).length;
-                return Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Expanded(child: Align(alignment: Alignment.bottomCenter, child: AnimatedContainer(duration: const Duration(milliseconds: 300), width: 20, height: (18 + count * 18).clamp(18, 115).toDouble(), decoration: BoxDecoration(color: count == 0 ? _green.withValues(alpha: .12) : _green, borderRadius: const BorderRadius.vertical(top: Radius.circular(8))))),
-                  const SizedBox(height: 6),
-                  Text(DateFormat('E').format(date).substring(0, 1), style: const TextStyle(fontSize: 11, color: _muted)),
-                ]));
-              })),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: List.generate(7, (index) {
+                  final date = dateOnly(now).subtract(Duration(days: 6 - index));
+                  final count = store.data.tasks
+                      .where((task) => task.done && task.completedAt?.startsWith(ymd(date)) == true)
+                      .length;
+                  return Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              width: 20,
+                              height: (18 + count * 18).clamp(18, 115).toDouble(),
+                              decoration: BoxDecoration(
+                                color: count == 0 ? _green.withValues(alpha: .12) : _green,
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          DateFormat('E').format(date).substring(0, 1),
+                          style: const TextStyle(fontSize: 11, color: _muted),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
             ),
           ),
         ),
