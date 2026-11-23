@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
@@ -754,6 +752,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  static const _files = MethodChannel('com.ibrahimgaya25.dayflow/files');
   late final TextEditingController name;
   late final TextEditingController tip;
 
@@ -782,14 +781,9 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _import() async {
-    final picked = await FilePicker.pickFile(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
-    final path = picked?.path;
-    if (path == null || !mounted) return;
+    final source = await _files.invokeMethod<String>('pickJson');
+    if (source == null || !mounted) return;
     try {
-      final source = await File(path).readAsString();
       final ok = await showDialog<bool>(context: context, builder: (context) => AlertDialog(title: const Text('Replace your DayFlow data?'), content: const Text('Importing replaces tasks, sessions, preferences, tips and badges on this device.'), actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')), FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Import'))])) ?? false;
       if (!ok) return;
       await widget.store.importJson(source);
